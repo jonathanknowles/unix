@@ -67,6 +67,9 @@ library
         time        >= 1.2     && < 1.7
 
     exposed-modules:
+
+        System.Linux.Directory.ByteString
+
         System.Posix
         System.Posix.ByteString
 
