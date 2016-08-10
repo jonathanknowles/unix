@@ -12,8 +12,8 @@ Portability : Linux
 
 module System.Linux.Directory.ByteString
     ( FileType (..)
-    , System.Posix.Directory.ByteString.openDirStream
-    , System.Posix.Directory.ByteString.closeDirStream
+    , openDirStream
+    , closeDirStream
     , readDirStream ) where
 
 import Foreign
