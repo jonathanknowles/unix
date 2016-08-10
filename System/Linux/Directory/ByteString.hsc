@@ -11,7 +11,7 @@ Portability : Linux
 -}
 
 module System.Linux.Directory.ByteString
-    ( DirEntryType (..)
+    ( FileType (..)
     , System.Posix.Directory.ByteString.openDirStream
     , System.Posix.Directory.ByteString.closeDirStream
     , readDirStream ) where
@@ -24,7 +24,7 @@ import System.Posix.Directory.Common
 
 import qualified Data.ByteString.Char8 as BC
 
-data DirEntryType
+data FileType
     = File
     | Directory
     | NamedPipe
@@ -35,8 +35,8 @@ data DirEntryType
     | Unknown
     deriving (Eq, Show)
 
-decodeDirEntryType :: Word32 -> DirEntryType
-decodeDirEntryType = \case
+decodeFileType :: Word32 -> FileType
+decodeFileType = \case
     01 -> NamedPipe
     02 -> CharacterDevice
     04 -> Directory
@@ -50,7 +50,7 @@ decodeDirEntryType = \case
 --   directory entry (@struct dirent@) for the open directory
 --   stream @dp@ and returns the @d_name@ and @d_type@ members
 --   of that structure.
-readDirStream :: DirStream -> IO (RawFilePath, DirEntryType)
+readDirStream :: DirStream -> IO (RawFilePath, FileType)
 readDirStream (DirStream dirp) =
         alloca $ \ptr_dEnt -> loop ptr_dEnt
     where
@@ -66,7 +66,7 @@ readDirStream (DirStream dirp) =
                             dname <- (d_name dEnt >>= peekFilePath)
                             dtype <- (d_type dEnt)
                             c_freeDirEnt dEnt
-                            return (dname, decodeDirEntryType dtype)
+                            return (dname, decodeFileType dtype)
                 else do
                     errno <- getErrno
                     if (errno == eINTR)
